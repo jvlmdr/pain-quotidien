@@ -1,0 +1,8 @@
+*.deb
+*.dsc
+*.tar.xz
+*.log
+**/datetime-build/
+**/gnome-settings-daemon-46.0/
+**/.venv/
+**/__pycache__/

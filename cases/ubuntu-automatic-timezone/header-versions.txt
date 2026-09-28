@@ -1,0 +1,8 @@
+libglib2.0-dev 2.80.0-6ubuntu3.9
+libglib2.0-dev-bin 2.80.0-6ubuntu3.9
+libgeoclue-2-dev 2.7.0-3ubuntu7
+libgeocode-glib-dev 3.26.3-6build3
+libgweather-4-dev 4.4.2-1build1
+libnotify-dev 0.8.3-1build2
+libpolkit-gobject-1-dev 124-2ubuntu1.24.04.4
+libgdk-pixbuf-2.0-dev 2.42.10+dfsg-3ubuntu3.3

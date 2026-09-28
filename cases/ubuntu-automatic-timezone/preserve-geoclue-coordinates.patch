@@ -1,0 +1,57 @@
+Description: Preserve GeoClue coordinates during automatic timezone selection
+ GNOME's reverse-geocoding service returns coordinates from an IP lookup
+ rather than the supplied location. Use the original GeoClue coordinates
+ for timezone selection and the reverse result only for country detection.
+Origin: backport, https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/merge_requests/469
+Bug: https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/issues/925
+Forwarded: not-needed
+Applied-Upstream: 50.0
+Author: Local Build <local@localhost>
+Last-Update: 2026-09-28
+
+--- gnome-settings-daemon-46.0.orig/plugins/datetime/gsd-timezone-monitor.c
++++ gnome-settings-daemon-46.0/plugins/datetime/gsd-timezone-monitor.c
+@@ -49,6 +49,9 @@ typedef struct
+         GClueSimple *geoclue_simple;
+         GCancellable *geoclue_cancellable;
+ 
++        gdouble raw_latitude;
++        gdouble raw_longitude;
++
+         gchar *current_timezone;
+ 
+         GSettings *location_settings;
+@@ -224,10 +227,14 @@ process_location (GsdTimezoneMonitor *se
+         g_autofree gchar *new_timezone = NULL;
+ 
+         country_code = geocode_place_get_country_code (place);
+-        location = geocode_place_get_location (place);
++        location = geocode_location_new (priv->raw_latitude,
++                                         priv->raw_longitude,
++                                         GEOCODE_LOCATION_ACCURACY_CITY);
+ 
+         new_timezone = find_timezone (self, location, country_code);
+ 
++        g_object_unref (location);
++
+         if (g_strcmp0 (priv->current_timezone, new_timezone) != 0) {
+                 g_debug ("Found updated timezone '%s' for country '%s'",
+                          new_timezone, country_code);
+@@ -291,6 +298,7 @@ on_location_notify (GClueSimple *simple,
+                     gpointer     user_data)
+ {
+         GsdTimezoneMonitor *self = user_data;
++        GsdTimezoneMonitorPrivate *priv = gsd_timezone_monitor_get_instance_private (self);
+         GClueLocation *location;
+         gdouble latitude, longitude;
+ 
+@@ -299,6 +307,9 @@ on_location_notify (GClueSimple *simple,
+         latitude = gclue_location_get_latitude (location);
+         longitude = gclue_location_get_longitude (location);
+ 
++        priv->raw_latitude = latitude;
++        priv->raw_longitude = longitude;
++
+         g_debug ("Got location %lf,%lf", latitude, longitude);
+ 
+         start_reverse_geocoding (self, latitude, longitude);
