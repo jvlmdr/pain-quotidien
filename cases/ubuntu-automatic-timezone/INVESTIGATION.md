@@ -6,6 +6,9 @@ Last verified: 2026-09-28.
 Environment: Ubuntu 24.04 x86-64, GNOME Settings Daemon `46.0-1ubuntu1.24.04.1`, GeoClue `2.7.0-3ubuntu7`, geocode-glib `3.26.3-6build3`.
 Recorded status: fixed locally with a working location provider and a GNOME backport.
 
+Investigated with OpenAI Codex in VS Code, using model `gpt-6-sol` with `medium` reasoning effort (Codex version `0.158.0`).
+These identifiers were verified against the local session metadata.
+
 ## Starting problem
 
 Automatic timezone updates were not working.
